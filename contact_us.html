@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .div3 a,
+        .foruser_div a {
+            text-decoration: none;
+            font-size: 18px;
+            margin-bottom: auto;
+            margin-left: 40px;
+            color: rgb(255, 255, 255);
+            font-weight: 900;
+            background-color: #45a049;
+            padding: 10px 25px;
+            border-radius: 20px;
+        }
+
+        .div3 {
+            display: flex;
+            flex-direction: row;
+            margin-top: 50px;
+            height: 550px;
+            width: 90%;
+            background-color: #4e504e;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .8);
+            border-radius: 20px;
+
+        }
+
+        .left_div3 {
+            flex: 30%;
+            background-image: url(c.jpg);
+            background-position: center;
+            background-size: cover;
+        }
+
+        .right_div3 {
+            flex: 50%;
+
+        }
+
+        @media (max-width: 1200px) {
+
+            .job_row {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+
+            .left_div3 {
+                flex: 60%;
+
+            }
+
+            .right_div3 {
+                flex: 40%;
+
+            }
+        }
+
+        @media (max-width: 1100px) {
+            .div_flex .flex_left h2 {
+                font-size: 48px;
+                margin-top: 50px;
+
+            }
+
+            .div_flex .flex_left h3 {
+                font-weight: 600;
+                font-size: 30px;
+
+
+            }
+
+            .div_flex .flex_left button {
+                margin-top: 0px;
+
+            }
+
+            .flex_right {
+
+                background-position: center;
+                background-size: cover;
+                position: absolute;
+
+            }
+
+        }
+
+        @media (max-width: 890) {
+            .div_flex .flex_left h2 {
+                font-size: 40px;
+
+
+            }
+
+            .div_flex .flex_left h3 {
+                /* font-weight: 600; */
+                font-size: 20px;
+
+
+            }
+
+        }
+
+        input[type=text],
+        input[type=email] {
+            width: 75%;
+            padding: 15px;
+
+            margin: 5px 0 22px 0;
+            border: none;
+            background: #f1f1f1;
+        }
+
+        input[type=text]:focus,
+        input[type=email]:focus {
+            background-color: #ddd;
+            outline: none;
+        }
+
+
+        .button {
+            align-self: bottom;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            border: none;
+            background: #0ce053;
+            color: #fcf9f9;
+            cursor: pointer;
+
+
+
+        }
+
+        .input__container input,
+        textarea {
+            width: 75%;
+            padding: 15px;
+            margin: 5px 0 22px 0;
+            border: none;
+            background: #f1f1f1;
+
+        }
+
+        main {
+            margin-top: 0;
+            margin-left: 0px;
+            transform: scale(.8);
+        }
+        p{
+            font-size: 25px;
+            padding: 0 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="div3">
+        <div class="left_div3"></div>
+
+
+
+
+
+        <div class="right_div3">
+            <form class="container">
+                <h1 id="contact_text">Contact Us </h1>
+                <p id="ftyw_text2">
+                    our team happy to answer your questions.Fill out
+                    the form and we'll be in touch as soon as possible.We value your feedback and inquiries.
+                    We strive to respond to all messages within 24 hours.
+                </p>
+                <main>
+                    <label for="name"><b>Name</b></label><br>
+                    <input type="text" placeholder="Enter name" name="name" required><br>
+
+                    <label for="email"><b>Email</b></label><br>
+                    <input type="text" placeholder="Enter email" name="email" required><br>
+
+                    <label for="message"><b>Message</b></label><br><br>
+                    <textarea id="message" name="message" rows="4" required></textarea>
+                    <br>
+                    <button type="submit" class="button">Submit</button>
+                </main>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

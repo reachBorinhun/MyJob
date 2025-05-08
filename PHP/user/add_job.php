@@ -90,11 +90,11 @@ if (!isset($_SESSION['id'])) {
             </select>
             <br><br>
             <label for="responsibilities">Responsibilities:</label>
-            <textarea name="responsibilities" rows="4" required></textarea><br>
+            <textarea name="responsibilities" rows="4" data-was-required="true" required></textarea>
+
 
             <label for="requirements">Requirements:</label>
-            <textarea name="requirements" rows="4" required></textarea><br>
-
+            <textarea name="requirements" rows="4" required></textarea><br> 
             <label for="exit_day">Exit Day:</label>
             <input type="date" name="exit_day" required><br>
 
@@ -114,8 +114,7 @@ if (!isset($_SESSION['id'])) {
             </select>
 
             <label for="card-number">Card Number:</label>
-            <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9012 3456" required pattern=".{12}">
-
+            <input type="text" id="card-number" name="card-number" placeholder="1234567890123456" required pattern="\d{16}">
             <label for="expiry-date">Expiry Date:</label>
             <input type="text" id="expiry-date" name="expiry-date" placeholder="MM/YY" required pattern=".{5}">
 
@@ -132,17 +131,29 @@ if (!isset($_SESSION['id'])) {
     </form>
 
     <script>
-        // Show add job form default
-        document.getElementById('addjob_form').style.display = 'block';
+    // Show add job form by default
+    document.getElementById('addjob_form').style.display = 'block';
 
-        function showElement(showFormId, hideFormId) {
-            const showForm = document.getElementById(showFormId);
-            const hideForm = document.getElementById(hideFormId);
+    function showElement(showFormId, hideFormId) {
+        const showForm = document.getElementById(showFormId);
+        const hideForm = document.getElementById(hideFormId);
 
-            showForm.style.display = 'block';
-            hideForm.style.display = 'none';
-        }
-    </script>
+        // Hide the old form and remove required from its inputs
+        hideForm.style.display = 'none';
+        Array.from(hideForm.querySelectorAll('[required]')).forEach(el => {
+            el.setAttribute('data-was-required', 'true');
+            el.removeAttribute('required');
+        });
+
+        // Show the new form and restore required fields
+        showForm.style.display = 'block';
+        Array.from(showForm.querySelectorAll('[data-was-required="true"]')).forEach(el => {
+            el.setAttribute('required', '');
+        });
+    }
+</script>
+
+
 
 
 

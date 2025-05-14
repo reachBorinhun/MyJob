@@ -1,4 +1,3 @@
-
 <?php $active4 = "active"; ?>
 
 <!DOCTYPE html>
@@ -6,87 +5,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="../CSS/about.css"> -->
-    <title>WorkWise</title>
+    <title>ITJob</title>
+
+    <!-- ✅ Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- ✅ Font Awesome (optional) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
-    body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-   
-}
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
 
+        .disc {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
 
-.disc {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
+        .logo {
+            width: 150px;
+            height: auto;
+            margin: 15px 0;
+        }
 
+        h2 {
+            color: #007bff;
+            margin-top: 20px;
+        }
 
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
 
+        ul li {
+            margin-bottom: 10px;
+        }
 
-.logo {
-    width: 130px;
-    cursor: pointer;
-    height: 40px;
-    margin-left: 20px;
-    margin-right: 30px;
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
 
-}
+        a:hover {
+            text-decoration: underline;
+        }
 
-
-@media screen and (max-width: 900px) {
-   
-    .disc {
-        max-width: 600px;
-      
-    }
-}
-@media screen and (max-width: 700px) {
-   
-    .disc {
-        max-width: 400px;
-      
-    }
-}
+        @media screen and (max-width: 700px) {
+            .disc {
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <header>
-        <link rel="stylesheet" href="../CSS/header.css">
-        <div class="headerbar">
-            <h3>The #1 Site for Remote Jobs</h3>
+    <?php include_once("navbar.php") ?>
 
-        </div>
-    </header>
-    <?php include_once("navbar.php")?>
     <div class="disc">
-        <h2>Why Choose WorkWise?</h2>
-        <img src="../Image/logo/logo1.png" alt="logo" class="logo">
+        <h2>Why Choose ITJob?</h2>
+        <img src="../Image/logo/ITJobs.png" alt="ITJob Logo" class="logo">
 
         <ul>
-            <li>Diverse Job Listings: Explore a vast array of job opportunities from various industries and sectors.
-            </li>
-            <li>User-Friendly Interface: Navigating your career path has never been easier.</li>
-            <li>Personalized Job Recommendations: Say goodbye to endless scrolling!</li>
-            <li>Connect with Employers: Establish meaningful connections with employers through our messaging platform.
-            </li>
-            <li>Skill Development Resources: Stay ahead in your career with our curated resources.</li>
-            <li>Mobile Accessibility: Job hunting on the go? WorkWise is mobile-friendly.</li>
+            <li><strong>Diverse Job Listings:</strong> Explore a wide variety of opportunities in tech and beyond.</li>
+            <li><strong>User-Friendly Interface:</strong> Designed to make your job search easy and efficient.</li>
+            <li><strong>Personalized Recommendations:</strong> Let us help you find the right job, faster.</li>
+            <li><strong>Connect with Employers:</strong> Chat directly and professionally within the platform.</li>
+            <li><strong>Skill Development:</strong> Access resources to grow your capabilities and stay competitive.</li>
+            <li><strong>Mobile Friendly:</strong> Job hunt anytime, anywhere from your phone.</li>
         </ul>
 
         <h2>Join Our Thriving Community</h2>
-        <p>WorkWise isn't just a job portal; it's a community of like-minded individuals committed to professional
-            growth. Share insights, seek advice, and celebrate successes with fellow members.</p>
+        <p>ITJob isn’t just a platform — it’s a network of tech professionals growing and succeeding together. Share your knowledge, ask questions, and grow your career in a supportive environment.</p>
 
-        <p>Ready to embark on your career journey? <a href="signup.php">Create your WorkWise account</a> today and
-            unlock a
-            world of possibilities!</p>
+        <p>Ready to level up your career? <a href="signup.php">Create your ITJob account</a> today and unlock new possibilities!</p>
     </div>
 
-    <?php include_once("footer.php")?>
+    <?php include_once("footer.php") ?>
+
+    <!-- ✅ Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+ <!-- #region -->   

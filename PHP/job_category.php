@@ -54,198 +54,129 @@ $result = mysqli_query($conn, $sql);
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Job Category</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="../CSS/user.css"> -->
-    <link rel="stylesheet" href="../CSS/job_list.css">
+
+    <!-- Font Awesome + Bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <title>Document</title>
-<style>
-#seardiv{
-   background-image: url(../Image/Home/ctg4.png);
-   background-position: center;
-   background-size: cover;
-   background-repeat: none;
-   
-    width: 90%;
-    height: 200px;
-    margin: 10px auto;
-    border-radius: 20px;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
-}
-.searchbar2{
-    margin-top: 0px;
-}
-#ctg_name{
-    color: white;
-    font-weight: 1500;
-    color: white;
-    font-size: 50px;
-    margin: 0;
-}
-#ctg_ds{
-    font-size: 30px;
-    font-style: italic;
-    color: white;
-    font-weight: 800;
-    margin: 10px 0 0 0 ;
-    /* margin-bottom: 0; */
-}
-#search_icon{
-    margin-left: -4px;
-}
-</style>
-
-
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../CSS/job_list.css">
+    <style>
+        #seardiv {
+            background-image: url(../Image/Home/ctg4.png);
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            width: 90%;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            padding: 20px;
+            color: white;
+        }
+        #ctg_name {
+            font-size: 50px;
+            font-weight: 700;
+        }
+        #ctg_ds {
+            font-size: 24px;
+            font-style: italic;
+            font-weight: 500;
+        }
+        #fsearch {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 5px;
+            border: none;
+        }
+    </style>
 </head>
+<body style="background-color: #f8f9fa;">
 
-<body>
-    <header>
-        <link rel="stylesheet" href="../CSS/header.css">
-        <div class="headerbar">
-            <h3>The #1 Site for Remote Jobs</h3>
-        </div>
-    </header>
+<?php include_once("navbar.php"); ?>
+<?php include_once("ctg_bar.php"); ?>
 
-
-
-    <?php include_once("navbar.php"); ?>
-    <?php include_once("ctg_bar.php"); ?>
-
-    <form action="job_category.php" method="get">
-        <div class="searchbar" id="seardiv" >
-            <?php 
-            $ctg=$_GET['ctg'];
-            if($ctg=='Graphics'){
-                $c1='Graphics & Design';
-                $c2='Designs to make you stand out';
-            } elseif($ctg=='Programming'){
-                $c1='Programming & Tech';
-                $c2='You think it. A programmer develops it';
-            }
-            else if($ctg=='Digital'){
-                $c1='Digital Marketing';
-                $c2='Build your brand. Grow your business.';
-            }
-            elseif($ctg=='Video'){
-                $c1='Video & Animation';
-                $c2='Bring your story to life with creative videos.';
-            }elseif($ctg=='Writing'){
-                $c1='Writing & Translation';
-                $c2='Get your words across—in any language.';
-            }
-            elseif($ctg=='Music'){
-                $c1='Music & Audio';
-                $c2='Do not miss a beat. Bring your sound to life.';
-            }
-            elseif($ctg=='Business'){
-                $c1='Business';
-                $c2='Business to make you stand out';
-            }
-            elseif($ctg=='AI'){
-                $c1='AI Services';
-                $c2='AI to make you stand out';
-            }else{
-                $c1='New';
-                $c2='New to make you stand out';
-            } ?>
-
-            <h1 id="ctg_name"><?php echo $c1;?></h1>
-            <h3 id="ctg_ds"><?php echo $c2;?></h3>
-            
-            <input id="fsearch" type="search" name="search" placeholder="<?php if (isset($_GET["search"])) {
-                                                                echo $_GET["search"];
-                                                            } else {
-                                                                echo "Search jobs...";
-                                                            } ?>">
-
-            <select name="filter"  id="idcheck " >
-                <option value="All Type">Job Type</option>
-                <option value="Full Time">Full Time</option>
-                <option value="Part Time">Part Time</option>
-            </select>
-            <button type="submit"    name="submit"><i class="fa fa-fw fa-search"></i></button>
-     
-        </div>
-        <input type="hidden" name="ctg" value="<?php echo $ctg?>">
-
-    </form>
-    <!-- <h3 id="phpmg">
-        <?php
-        // if (isset($_GET["filter"])) {
-        //     echo "Job Type: " . $_GET['filter'];
-        // }
+<form action="job_category.php" method="get">
+    <div class="container" id="seardiv">
+        <?php 
+        $ctg = $_GET['ctg'] ?? '';
+        switch($ctg) {
+            case 'Graphics': $c1='Graphics & Design'; $c2='Designs to make you stand out'; break;
+            case 'Programming': $c1='Programming & Tech'; $c2='You think it. A programmer develops it'; break;
+            case 'Digital': $c1='Digital Marketing'; $c2='Build your brand. Grow your business.'; break;
+            case 'Video': $c1='Video & Animation'; $c2='Bring your story to life with creative videos.'; break;
+            case 'Writing': $c1='Writing & Translation'; $c2='Get your words across—in any language.'; break;
+            case 'Music': $c1='Music & Audio'; $c2='Do not miss a beat. Bring your sound to life.'; break;
+            case 'Business': $c1='Business'; $c2='Business to make you stand out'; break;
+            case 'AI': $c1='AI Services'; $c2='AI to make you stand out'; break;
+            default: $c1='New'; $c2='New to make you stand out'; break;
+        }
         ?>
-    </h3> -->
+        <h1 id="ctg_name"><?php echo $c1; ?></h1>
+        <h3 id="ctg_ds"><?php echo $c2; ?></h3>
 
-    <div class="job_listings">
-        <div class="job_row">
-            <?php
-            if ($result && mysqli_num_rows($result) > 0) {
-                $newID = 1;
-                while ($row = mysqli_fetch_assoc($result)) {
-                    ?>
+        <div class="row align-items-center gx-2 gy-2">
+    <div class="col-md-6">
+        <input id="fsearch" type="search" name="search" class="form-control"
+               placeholder="<?php echo isset($_GET['search']) ? $_GET['search'] : 'Search jobs...'; ?>">
+    </div>
+    <div class="col-md-3">
+        <select name="filter" class="form-select">
+            <option value="All Type">Job Type</option>
+            <option value="Full Time" <?php if(isset($_GET['filter']) && $_GET['filter']=='Full Time') echo 'selected'; ?>>Full Time</option>
+            <option value="Part Time" <?php if(isset($_GET['filter']) && $_GET['filter']=='Part Time') echo 'selected'; ?>>Part Time</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" name="submit" class="btn text-white w-100" style="background-color: rgb(85, 182, 243);">
+            <i class="fa fa-fw fa-search"></i> Search
+        </button>
+    </div>
+</div>
 
-                    <div class="job">
-                        <h2>
-                            <?php echo $row["title"]; ?>
-                        </h2>
-                        <div class="job_details">
-                            
-                            <h4>Job Category:</h4>
-                            <p>
-                                <?php echo $row['category']; ?>
-                            </p>
-                            <h4>Job Type:</h4>
-                            <p>
-                                <?php echo $row['jobType']; ?>
-                            </p>
-                            <h4>Company:</h4>
-                            <p>
-                                <?php echo $row['company']; ?>
-                            </p>
-                            <h4>Location:</h4>
-                            <p>
-                                <?php echo $row['location']; ?>
-                            </p>
-                            <h4>Price:</h4>
-                            <p>$
-                                <?php echo $row['price']; ?> per monthly
-                            </p>
-                        </div>
-                      
-                    </div>
+        <input type="hidden" name="ctg" value="<?php echo htmlspecialchars($ctg); ?>">
+    </div>
+</form>
 
-                    <?php
-                    $newID++;
-                }
-                ?>
+<div class="container my-4">
+    <?php if (isset($_GET["filter"])): ?>
+        <h5 class="text-muted mb-4">Job Type: <strong><?php echo $_GET['filter']; ?></strong></h5>
+    <?php endif; ?>
+
+    <div class="row">
+        <?php
+        if ($result && mysqli_num_rows($result) > 0):
+            while ($row = mysqli_fetch_assoc($result)):
+        ?>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-primary"><?php echo $row["title"]; ?></h5>
+                    <p class="mb-2"><strong>Category:</strong> <?php echo $row['category']; ?></p>
+                    <p class="mb-2"><strong>Type:</strong> <?php echo $row['jobType']; ?></p>
+                    <p class="mb-2"><strong>Company:</strong> <?php echo $row['company']; ?></p>
+                    <p class="mb-2"><strong>Location:</strong> <?php echo $row['location']; ?></p>
+                    <p class="mb-0"><strong>Price:</strong> $<?php echo $row['price']; ?> per month</p>
+                </div>
             </div>
         </div>
-        <?php
-            } else {
-                // echo '<script> alert("Data not found.");</script>';
-                $note = "Data not found.";
-                ?>
-
-        <div class="note" style="width:100%; text-align: center; ">
-            <h1 style="color: red">
-                <?php
-                echo $note;
-                ?>
-            </h1>
+        <?php endwhile; else: ?>
+        <div class="col-12 text-center my-5">
+            <h3 class="text-danger"><?php echo $note ?? "Data not found."; ?></h3>
         </div>
+        <?php endif; ?>
+    </div>
+</div>
 
-
-
-        <?php
-            }
-?>
+<?php if (($note ?? '') != "Data not found.") include_once("footer.php"); ?>
 </body>
-
 </html>
+
 <?php $conn->close(); ?>

@@ -17,7 +17,7 @@ if (!isset($_SESSION['id'])) {
         display: flex;
         flex-wrap: wrap;
         margin-top: 150px;
-        background-color: rgb(2, 54, 2);
+        background-color: rgb(85, 182, 243);
 
         padding: 60px 10%;
     }
@@ -144,14 +144,14 @@ if (!isset($_SESSION['id'])) {
         <h4>My Account</h4>
         <ul>
             <li><a href="#">My account</a></li>
-            <li><a href="#">Find Talenter </a></li>
-            <li><a href="#">Find Freelance </a></li>
+            <!-- <li><a href="#">Find Talenter </a></li>
+            <li><a href="#">Find Freelance </a></li> -->
 
         </ul>
     </div>
 
         <div class="text">
-            <P> &copy; Copyright 2023 workwise Group. All right reserved </P>
+            <P> &copy; Copyright 2025 workwise Group. All right reserved </P>
         </div>
 
 

@@ -102,7 +102,12 @@
         <label for="exit_day">Exit Day:</label>
         <input type="date" name="exit_day" required><br>
 
+        <label for="job_img">Upload Job Image:</label>
+    <input type="file" name="job_img" accept="image/*" required>
         <br>
+        
+        <br>
+        
         <input id="cancel" type="submit" value="Cancel">
         <input id="add" type="submit" name="submit" value="Add Job">
     </form>

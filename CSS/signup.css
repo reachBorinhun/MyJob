@@ -10,43 +10,69 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+}
 
+form {
+    width: 100%;
+    max-width: 400px;
 }
 
 .form {
     background-color: #ffffffe4;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 2);
+    padding: 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
     width: 100%;
     text-align: center;
-
+    max-height: 95vh;
+    overflow-y: auto;
 }
 
 label {
     display: block;
     margin-bottom: 8px;
+    font-size: 13px;
+    color: #444;
 }
 
-input , select{
+input, select {
     width: 100%;
     padding: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     box-sizing: border-box;
+    border-radius: 10px;
+    border: 1px solid #ccc;
 }
 
 button {
     background-color: #4caf50;
     color: #fff;
-    padding: 10px 20px;
+    padding: 10px;
     border: none;
-    border-radius: 4px;
+    border-radius: 20px;
+    font-weight: bolder;
+    font-size: larger;
     cursor: pointer;
-
+    width: 100%;
 }
-#S1 a{
-    text-decoration: none;
-    color: white;
+
+button:hover {
+    background-color: #3e8e41;
+}
+
+.logo {
+    width: 120px;
+    float: left;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.close-btn {
+    float: right;
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+    cursor: pointer;
 }
 
 .name-input {
@@ -54,34 +80,16 @@ button {
     gap: 10px;
 }
 
-.form input {
+.name-input input {
     width: 100%;
-    border-radius: 10px;
 }
 
-#S1 {
-    width: 100%;
-    border-radius: 20px;
-    font-weight: bolder;
-    font-size: larger;
+h2 {
+    font-size: 18px;
+    margin: 15px 0;
 }
 
-.logo {
-    width: 130px;
-    cursor: pointer;
-    float: left;
-}
-
-#firstName {
-    width: 48%;
-    float: inline-start;
-
-
-}
-
-#lastName {
-    width: 48%;
-    float: inline-end;
-    margin-left: 0px;
-
+h5 {
+    margin-top: 16px;
+    font-size: 13px;
 }

@@ -86,7 +86,7 @@ if (isset($_POST['submit'])) {
 <body>
 
     <div class="login-container  hidden" id="check_password" style="display: <?php echo $none1?>;">
-        <a href="index.php"> <img src="../Image/logo/logo1.png" alt="logo" class="logo"></a>
+        <a href="index.php"> <img src="../Image/logo/ITJobs-remove.png" alt="logo" class="logo"></a>
         <a href="index.php"><img src="../Image/logo/X.png" alt="x" style="float: inline-end; width: 20px; height: 20px;"></a>
         <br><br>
         <h2>Update your password</h2><br>
@@ -100,16 +100,16 @@ if (isset($_POST['submit'])) {
                 <label for="password" style="text-align: left;">Select your questions and password</label>
                 <select name="qusation" required>
                     <option value="What is your favourite color">What is your favourite color</option>
-                    <option value="What is your favourite color">What is your favourite color</option>
-                    <option value="What is your favourite color">What is your favourite color</option>
-                    <option value="What is your favourite color">What is your favourite color</option>
+                    <option value="What is your favourite color">What is your bff name</option>
+                    <option value="What is your favourite color">What is your city name</option>
+                    <option value="What is your favourite color">What is your lover name</option>
                 </select>
                 <input type="text" id="text" name="answer" placeholder="Enter your answer" required>
             </div>
 
             </h5>
-            <div class="form-group" id="loginbtn">
-                <button type="submit" name="submit">Submit</button>
+            <div class="form-group">
+                <button  style="background-color: rgb(9, 54, 188); color: aliceblue;" type="submit" name="submit">Submit</button>
 
             </div>
 
@@ -119,9 +119,9 @@ if (isset($_POST['submit'])) {
     </div>
 
 
-
+        <!-- update password -->
     <div class="login-container  hidden " id="new_password" style="display: <?php echo $none2?>;">
-        <a href="index.php"> <img src="../Image/logo/logo1.png" alt="logo" class="logo"></a>
+        <a href="index.php"> <img src="../Image/logo/ITJobs-remove.png" alt="logo" class="logo"></a>
         <a href="index.php"><img src="../Image/logo/X.png" alt="x" style="float: inline-end; width: 20px; height: 20px;"></a>
         <br><br>
         <h2>Update your password</h2><br>

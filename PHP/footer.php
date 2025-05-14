@@ -1,3 +1,4 @@
+<html>
 <style>
     /* -- Footer -- */
     .body {
@@ -17,7 +18,7 @@
         display: flex;
         flex-wrap: wrap;
         margin-top: auto;
-        background-color: rgb(2, 54, 2);
+       background-color: rgb(55, 90, 196);
 
         padding: 60px 10%;
     }
@@ -44,7 +45,7 @@
         position: absolute;
         left: 0;
         bottom: -6px;
-        background-color: rgb(85, 182, 243);
+        background-color:   ;
         height: 2px;
         width: 40px;
     }
@@ -70,7 +71,7 @@
     .text {
         text-align: center;
         font-size: 22px;
-        color: rgb(255, 255, 255);
+        color: white;
         margin: auto;
         width: 100%;
     }
@@ -150,8 +151,8 @@
             </ul>
         </div>
 
-        <div class="text">
-            <P> &copy; Copyright 2023 workwise Group. All right reserved </P>
+        <div  style="color: aliceblue;" class="text">
+            <P> &copy; Copyright 2025 ITJobs Group. All right reserved </P>
         </div>
 
 

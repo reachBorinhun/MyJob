@@ -1,7 +1,5 @@
 <?php
-if (session_start()) {
-    session_destroy();
-}
+session_start(); // Proper session start
 require_once('conn.php');
 ?>
 <!DOCTYPE html>
@@ -17,7 +15,6 @@ require_once('conn.php');
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <!-- Optional Custom CSS -->
     <style>
         body {
             background-color: #f8f9fa;
@@ -56,17 +53,23 @@ require_once('conn.php');
                     <form method="post" action="#">
                         <div class="mb-3">
                             <label for="name" class="form-label">Your Name</label>
-                            <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+                            <input type="text" class="form-control" id="name" placeholder="Enter your name" required <?php if (!isset($_SESSION['id'])) echo 'disabled'; ?>>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Your Email</label>
-                            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                            <input type="email" class="form-control" id="email" placeholder="Enter your email" required <?php if (!isset($_SESSION['id'])) echo 'disabled'; ?>>
                         </div>
                         <div class="mb-3">
                             <label for="message" class="form-label">Your Message</label>
-                            <textarea class="form-control" id="message" rows="5" placeholder="Type your message here..." required></textarea>
+                            <textarea class="form-control" id="message" rows="5" placeholder="Type your message here..." required <?php if (!isset($_SESSION['id'])) echo 'disabled'; ?>></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                        <?php if (isset($_SESSION['id'])): ?>
+                            <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                        <?php else: ?>
+                            <div class="alert alert-warning text-center" role="alert">
+                                Please <a href="login.php">log in</a> to send us a message.
+                            </div>
+                        <?php endif; ?>
                     </form>
                 </div>
             </div>
@@ -86,7 +89,7 @@ require_once('conn.php');
                     <p>Sat - Sun: Closed</p>
 
                     <hr>
-
+                            
                     <h6 class="fw-semibold">Follow Us</h6>
                     <a href="#" class="me-2"><i class="fa fa-facebook-official fa-2x"></i></a>
                     <a href="#" class="me-2"><i class="fa fa-twitter fa-2x"></i></a>

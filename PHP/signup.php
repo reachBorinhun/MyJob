@@ -58,7 +58,7 @@ if (isset($_POST["submit"])) {
 
     <form action="signup.php" method="post">
         <div class="form">
-            <a href="index.php"> <img src="../Image/logo/logo1.png" alt="logo" class="logo"></a>
+            <a href="index.php"> <img src="../Image/logo/ITJobs-remove.png" alt="logo" class="logo"></a>
             <a href="index.php"><img src="../Image/logo/X.png" alt="x"
                     style="float: inline-end; width: 20px; height: 20px;"></a>
 
@@ -76,10 +76,10 @@ if (isset($_POST["submit"])) {
             <input type="password" id="confirmpassword" name="cpassword" placeholder="Confirm password" required>
             <br>
             <select name="qusation">
-                <option value="What is your favourite color">What is your favourite color</option>
-                <option value="What is your favourite color">What is your favourite color</option>
-                <option value="What is your favourite color">What is your favourite color</option>
-                <option value="What is your favourite color">What is your favourite color</option>
+                 <option value="What is your favourite color">What is your favourite color</option>
+                    <option value="What is your favourite color">What is your bff name</option>
+                    <option value="What is your favourite color">What is your city name</option>
+                    <option value="What is your favourite color">What is your lover name</option>
             </select>
             <input type="text" name="answer" placeholder="Enter your answer" required>
             <label>If you forget your password you need to <span style="font-style:italic; color:red;">remember</span>
@@ -88,10 +88,10 @@ if (isset($_POST["submit"])) {
 
             <center>
                 <br>
-                <button type="submit" id="S1" name="submit">Sign Up</button>
+                <button style="background-color: rgb(9, 54, 188);" type="submit" id="S1" name="submit">Sign Up</button>
             </center>
 
-            <h5 style="color: red;"> -- Already have WorkWise an account ? <a href="../HTML/Login.html"
+            <h5 style="color: red;"> -- Already have WorkWise an account ? <a href="../PHP/login.php"
                     style="border: 0; ">Login</a>
 
         </div>

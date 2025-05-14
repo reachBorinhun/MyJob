@@ -1,265 +1,115 @@
-<?php session_start(); ?>
-<?php 
+<?php session_start();
 if (!isset($_SESSION['id'])) {
     header('Location: ../login.php');
     exit();
-} ?>
-<?php include("../conn.php"); ?>
+}
+include("../conn.php");
+$active2 = "active";
 
-<?php $active2 = "active"; ?>
-
-<?php
+$ctg = $_GET["ctg"];
 $note = "";
-$ctg=$_GET["ctg"];
-if (isset($_GET["search"]) || isset($_GET["filter"])) {
-    $search1 = $_GET["search"];
-    $filter = $_GET["filter"];
-    $search = mysqli_real_escape_string($conn, $search1);
+$search1 = $_GET["search"] ?? '';
+$filter = $_GET["filter"] ?? '';
 
-    if (!empty($search)) {
-        if ($filter == "All Type") {
-            $sql = "SELECT * FROM jobtable WHERE category='$ctg' AND (title LIKE '%$search%' OR company LIKE '%$search%' OR location LIKE '%$search%' OR price LIKE '%$search%' OR exitDay LIKE '%$search%')";
-            $result = mysqli_query($conn, $sql);
-            if ($result == false) {
-                // echo '<script> alert("Data not found.");</script>';
+$search = mysqli_real_escape_string($conn, $search1);
 
-            }
-        } else if ($filter == "Full Time" || $filter == "Part Time") {
-            $sql = "SELECT * FROM jobtable WHERE category='$ctg' AND (title LIKE '%$search%' OR company LIKE '%$search%' OR location LIKE '%$search%' OR price LIKE '%$search%' OR exitDay LIKE '%$search%') AND jobType = '$filter'";
-            $result = mysqli_query($conn, $sql);
-            if ($result == false) {
-
-
-            }
-
-        } else {
-            // echo '<script> alert("Data not found.");</script>';
-
-        }
-    } else {
-        if ($filter == "Full Time" || $filter == "Part Time") {
-            $sql = "SELECT * FROM jobtable WHERE category='$ctg' AND jobType = '$filter'";
-            $result = mysqli_query($conn, $sql);
-            if ($result == false) {
-                // echo '<script> alert("Data not found.");</script>';
-                $note = "Data not found.";
-            }
-
-        } else {
-            $sql = "SELECT * FROM jobtable WHERE category='$ctg' ";
-
-        }
-
+if (!empty($search1) || !empty($filter)) {
+    $sql = "SELECT * FROM jobtable WHERE category='$ctg'";
+    if (!empty($search1)) {
+        $sql .= " AND (title LIKE '%$search%' OR company LIKE '%$search%' OR location LIKE '%$search%' OR price LIKE '%$search%' OR exitDay LIKE '%$search%')";
+    }
+    if ($filter == "Full Time" || $filter == "Part Time") {
+        $sql .= " AND jobType = '$filter'";
     }
 } else {
     $sql = "SELECT * FROM jobtable WHERE category='$ctg'";
 }
-
 $result = mysqli_query($conn, $sql);
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="../../CSS/save_job.css">
- 
-
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <title>Document</title>
-<style>
-#seardiv{
-   background-image: url(../../Image/Home/ctg2.jpg);
-   background-position: center;
-   background-size: cover;
-   background-repeat: none;
-   
-    width: 90%;
-    height: 180px;
-    margin: 10px auto;
-    border-radius: 20px;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
-    
-}
-.searchbar2{
-    margin-top: 30px;
-}
-#ctg_name{
-    color: white;
-    font-weight: 1500;
-    color: white;
-    font-size: 50px;
-    margin: 0;
-}
-#ctg_ds{
-    font-size: 30px;
-    font-style: italic;
-    color: white;
-    font-weight: 800;
-    margin: 10px 0 0 0 ;
-    /* margin-bottom: 0; */
-}
-#search_icon{
-    margin-left: -4px;
-}
-</style>
-
-
+    <title>Job Listings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<body class="bg-light">
 
-<body>
-    <!-- <header>
-        <link rel="stylesheet" href="../../CSS/header.css">
-        <div class="headerbar">
-            <h3>The #1 Site for Remote Jobs</h3>
-        </div>
-    </header> -->
+<?php include_once("login_header.php"); ?>
+<?php include_once("login_navbar.php"); ?>
+<?php include_once("login_ctg_bar.php"); ?>
 
-    <?php include_once("login_header.php"); ?>
-
-
-    <?php include_once("login_navbar.php"); ?>
-    <?php include_once("login_ctg_bar.php"); ?>
-
-    <form action="login_job_category.php" method="get">
-        <div class="searchbar" id="seardiv">
-            <?php 
-            $ctg=$_GET['ctg'];
-            if($ctg=='Graphics'){
-                $c1='Graphics & Design';
-                $c2='Designs to make you stand out';
-            } elseif($ctg=='Programming'){
-                $c1='Programming & Tech';
-                $c2='You think it. A programmer develops it';
-            }
-            else if($ctg=='Digital'){
-                $c1='Digital Marketing';
-                $c2='Build your brand. Grow your business.';
-            }
-            elseif($ctg=='Video'){
-                $c1='Video & Animation';
-                $c2='Bring your story to life with creative videos.';
-            }elseif($ctg=='Writing'){
-                $c1='Writing & Translation';
-                $c2='Get your words across—in any language.';
-            }
-            elseif($ctg=='Music'){
-                $c1='Music & Audio';
-                $c2='Do not miss a beat. Bring your sound to life.';
-            }
-            elseif($ctg=='Business'){
-                $c1='Business';
-                $c2='Business to make you stand out';
-            }
-            elseif($ctg=='AI'){
-                $c1='AI Services';
-                $c2='AI to make you stand out';
-            }else{
-                $c1='New';
-                $c2='New to make you stand out';
-            } ?>
-
-            <h1 id="ctg_name"><?php echo $c1;?></h1>
-            <h3 id="ctg_ds"><?php echo $c2;?></h3>
-            
-            <input class="searchbar2"  type="search" name="search" placeholder="<?php if (isset($_GET["search"])) {
-                echo $_GET["search"];
-            } else {
-                echo "Search";
-            } ?>">
-
-            <select class="searchbar2" name="filter" id="">
-                <option value="All Type">Job Type</option>
-                <option value="Full Time">Full Time</option>
-                <option value="Part Time">Part Time</option>
-            </select>
-            <button class="searchbar2" id="search_icon" ><i class="fa fa-fw fa-search"></i></button>
-        </div>
-        <input type="hidden" name="ctg" value="<?php echo $ctg?>">
-
-    </form>
-    <!-- <h3 id="phpmg">
+<div class="container mt-4">
+    <div class="p-5 rounded bg-dark text-white text-center mb-4" style="background-image: url('../../Image/Home/ctg2.jpg'); background-size: cover;">
         <?php
-        // if (isset($_GET["filter"])) {
-        //     echo "Job Type: " . $_GET['filter'];
-        // }
+        $categoryMap = [
+            'Graphics' => ['Graphics & Design', 'Designs to make you stand out'],
+            'Programming' => ['Programming & Tech', 'You think it. A programmer develops it'],
+            'Digital' => ['Digital Marketing', 'Build your brand. Grow your business.'],
+            'Video' => ['Video & Animation', 'Bring your story to life with creative videos.'],
+            'Writing' => ['Writing & Translation', 'Get your words across—in any language.'],
+            'Music' => ['Music & Audio', 'Do not miss a beat. Bring your sound to life.'],
+            'Business' => ['Business', 'Business to make you stand out'],
+            'AI' => ['AI Services', 'AI to make you stand out'],
+        ];
+        $c1 = $categoryMap[$ctg][0] ?? 'New';
+        $c2 = $categoryMap[$ctg][1] ?? 'New to make you stand out';
         ?>
-    </h3> -->
+        <h1 class="display-4"><?php echo $c1; ?></h1>
+        <p class="lead fw-bold"><?php echo $c2; ?></p>
+    </div>
 
-    <div class="job_listings">
-        <div class="job_row">
-            <?php
-            if ($result && mysqli_num_rows($result) > 0) {
-                $newID = 1;
-                while ($row = mysqli_fetch_assoc($result)) {
-                    ?>
+    <form class="row g-2 mb-4" method="get" action="login_job_category.php">
+        <div class="col-md-5">
+            <input type="search" name="search" value="<?= htmlspecialchars($search1) ?>" class="form-control" placeholder="Search">
+        </div>
+        <div class="col-md-3">
+            <select name="filter" class="form-select">
+                <option value="All Type" <?= $filter == "All Type" ? 'selected' : '' ?>>All Type</option>
+                <option value="Full Time" <?= $filter == "Full Time" ? 'selected' : '' ?>>Full Time</option>
+                <option value="Part Time" <?= $filter == "Part Time" ? 'selected' : '' ?>>Part Time</option>
+            </select>
+        </div>
+        <input type="hidden" name="ctg" value="<?= htmlspecialchars($ctg) ?>">
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100"><i class="fa fa-search"></i> Search</button>
+        </div>
+    </form>
 
-                    <div class="job">
-                        <h2>
-                            <?php echo $row["title"]; ?>
-                        </h2>
-                        <div class="job_details">
-                            <h4>Job Type:</h4>
-                            <p>
-                                <?php echo $row['jobType']; ?>
-                            </p>
-                            <h4>Company:</h4>
-                            <p>
-                                <?php echo $row['company']; ?>
-                            </p>
-                            <h4>Location:</h4>
-                            <p>
-                                <?php echo $row['location']; ?>
-                            </p>
-                            <h4>Price:</h4>
-                            <p>$
-                                <?php echo $row['price']; ?> per monthly
-                            </p>
-                            <h4>Exit Day:</h4>
-                            <p><span style="color: rgba(255, 0, 0, 0.601);">
-                                    <?php echo $row['exitDay']; ?>
-                                </span></p>
+    <?php if ($result && mysqli_num_rows($result) > 0): ?>
+        <div class="row">
+            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title"><?= $row["title"]; ?></h5>
+                            <p class="mb-1"><strong>Job Type:</strong> <?= $row['jobType']; ?></p>
+                            <p class="mb-1"><strong>Company:</strong> <?= $row['company']; ?></p>
+                            <p class="mb-1"><strong>Location:</strong> <?= $row['location']; ?></p>
+                            <p class="mb-1"><strong>Price:</strong> $<?= $row['price']; ?> per monthly</p>
+                            <p class="mb-1 text-danger"><strong>Exit Day:</strong> <?= $row['exitDay']; ?></p>
                         </div>
-                        <center>
+                        <div class="card-footer text-center bg-white">
                             <form action="more_details.php" method="get">
-                                <button class="apply-btn" type="submit" name="apply">
-                                    <input type="hidden" name="jobId" value="<?php echo $row['jobId']; ?>">
+                                <input type="hidden" name="jobId" value="<?= $row['jobId']; ?>">
+                                <button class="btn btn-outline-primary btn-sm" type="submit" name="apply">
                                     More Details <i class="fas fa-info-circle"></i>
                                 </button>
                             </form>
-                        </center>
+                        </div>
                     </div>
-
-                    <?php
-                    $newID++;
-                }
-                ?>
-            </div>
+                </div>
+            <?php endwhile; ?>
         </div>
-        <?php
-            } else {
-                // echo '<script> alert("Data not found.");</script>';
-                $note = "Data not found.";
-                ?>
-
-        <div class="note" style="width:100%; text-align: center; ">
-            <h1 style="color: red">
-                <?php
-                echo $note;
-                ?>
-            </h1>
+    <?php else: ?>
+        <div class="alert alert-danger text-center" role="alert">
+            <?= $note ?: "No results found."; ?>
         </div>
+    <?php endif; ?>
+</div>
 
-
-
-        <?php
-            }
-            ?>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

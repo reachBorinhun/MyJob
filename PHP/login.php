@@ -93,7 +93,7 @@ if ($conn && (!isset($_POST["submit"]) || !empty($error_message))) {
             
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <a href="index.php"> <!-- Make sure index.php is in the same directory or adjust path -->
-                    <img src="../Image/logo/ITJobs.png" alt="logo" style="max-height: 40px;">
+                    <img src="../Image/logo/Jobio_1.png" alt="logo" style="max-height: 40px;">
                 </a>
                 <a href="index.php"> <!-- Make sure index.php is in the same directory or adjust path -->
                     <img src="../Image/logo/X.png" alt="close" style="width: 20px; height: 20px;">

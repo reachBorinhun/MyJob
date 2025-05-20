@@ -86,7 +86,7 @@ if (isset($_POST['submit'])) {
 <body>
 
     <div class="login-container  hidden" id="check_password" style="display: <?php echo $none1?>;">
-        <a href="index.php"> <img src="../Image/logo/ITJobs-remove.png" alt="logo" class="logo"></a>
+        <a href="index.php"> <img src="../Image/logo/Jobio_1-remove.png" alt="logo" class="logo"></a>
         <a href="index.php"><img src="../Image/logo/X.png" alt="x" style="float: inline-end; width: 20px; height: 20px;"></a>
         <br><br>
         <h2>Update your password</h2><br>

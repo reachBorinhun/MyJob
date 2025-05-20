@@ -96,7 +96,7 @@ if (!isset($_SESSION['id'])) {
 <!-- Navbar HTML -->
 <div class="navbar" id="navbarid">
     <div class="navbar-logo">
-        <a href="home.php"><img src="../../Image/logo/ITJobs-remove.png" alt="Logo"></a>
+        <a href="home.php"><img src="../../Image/logo/Jobio_1.png" alt="Logo"></a>
     </div>
 
     <div class="navbar-toggle" onclick="toggleNavbar()">

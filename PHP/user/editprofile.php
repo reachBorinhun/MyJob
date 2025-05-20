@@ -99,12 +99,6 @@ if (!isset($_SESSION['id'])) {
 
 <body>
 
-    <header>
-        <link rel="stylesheet" href="../../CSS/header.css">
-        <div class="headerbar">
-            <h3>The #1 Site for Remote Jobs</h3>
-        </div>
-    </header>
 
     <?php 
     if($_SESSION['role'] =="admin"){

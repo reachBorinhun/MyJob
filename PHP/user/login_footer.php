@@ -151,7 +151,7 @@ if (!isset($_SESSION['id'])) {
     </div>
 
         <div class="text">
-            <P> &copy; Copyright 2025 workwise Group. All right reserved </P>
+            <P> &copy; Copyright 2025 Jobio Group. All right reserved </P>
         </div>
 
 

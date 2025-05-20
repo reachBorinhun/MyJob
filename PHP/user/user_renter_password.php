@@ -81,7 +81,7 @@ mysqli_close($conn);
 
 <body>
     <div class="login-container">
-        <a href="home.php"> <img src="../../Image/logo/logo1.png" alt="logo" class="logo"></a>
+        <a href="home.php"> <img src="../../Image/logo/ITJobs-remove.png" alt="logo" class="logo"></a>
         <a href="home.php"><img src="../../Image/logo/X.png" alt="x" style="float: inline-end; width: 20px; height: 20px;"></a>
         <br><br>
         <h2>Re-enter Password</h2><br>

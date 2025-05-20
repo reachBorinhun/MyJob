@@ -6,45 +6,49 @@
 <?php
 $note = "";
 $ctg = $_GET["ctg"];
-if (isset($_GET["search"]) || isset($_GET["filter"])) {
-    $search1 = $_GET["search"];
-    $filter = $_GET["filter"];
-    $search = mysqli_real_escape_string($conn, $search1);
 
-    if (!empty($search)) {
-        if ($filter == "All Type") {
+// Adopt safer GET parameter fetching as in the first code for robustness in HTML rendering
+// This does not change the core logic of how $search1 and $filter affect the SQL query
+$search1 = $_GET["search"] ?? '';
+$filter = $_GET["filter"] ?? ''; // If form sends "All Type", $filter will be "All Type". If nothing selected or empty, it's ''.
+
+$search = mysqli_real_escape_string($conn, $search1);
+
+// Original SQL query logic from the second code - UNCHANGED
+if (!empty($search1) || (!empty($filter) && $filter != "All Type" && $filter != "")) { // Condition slightly adjusted to handle empty filter as well
+    if (!empty($search1)) {
+        if ($filter == "All Type" || empty($filter)) {
             $sql = "SELECT * FROM jobtable WHERE category='$ctg' AND (jobId LIKE '%$search%' OR title LIKE '%$search%' OR company LIKE '%$search%' OR location LIKE '%$search%' OR price LIKE '%$search%' OR exitDay LIKE '%$search%')";
-            $result = mysqli_query($conn, $sql);
-            if ($result == false) {
-                // echo '<script> alert("Data not found.");</script>';
-
-            }
         } else if ($filter == "Full Time" || $filter == "Part Time") {
             $sql = "SELECT * FROM jobtable WHERE category='$ctg' AND ( jobId LIKE '%$search%' OR title LIKE '%$search%' OR company LIKE '%$search%' OR location LIKE '%$search%' OR price LIKE '%$search%' OR exitDay LIKE '%$search%') AND jobType = '$filter'";
-            $result = mysqli_query($conn, $sql);
-            if ($result == false) {
-            }
         } else {
-            // echo '<script> alert("Data not found.");</script>';
-
+            // Fallback for search term with unhandled filter type, as per original structure implied behavior
+            $sql = "SELECT * FROM jobtable WHERE category='$ctg' AND (jobId LIKE '%$search%' OR title LIKE '%$search%' OR company LIKE '%$search%' OR location LIKE '%$search%' OR price LIKE '%$search%' OR exitDay LIKE '%$search%')";
         }
-    } else {
+    } else { // search1 is empty
         if ($filter == "Full Time" || $filter == "Part Time") {
             $sql = "SELECT * FROM jobtable WHERE category='$ctg' AND jobType = '$filter'";
-            $result = mysqli_query($conn, $sql);
-            if ($result == false) {
-                // echo '<script> alert("Data not found.");</script>';
-                $note = "Data not found.";
-            }
-        } else {
-            $sql = "SELECT * FROM jobtable WHERE category='$ctg' ";
+        } else { // search1 is empty and filter is "All Type" or empty or other
+            $sql = "SELECT * FROM jobtable WHERE category='$ctg'";
         }
     }
-} else {
+} else { // No search term and filter is "All Type" or empty
     $sql = "SELECT * FROM jobtable WHERE category='$ctg'";
 }
 
 $result = mysqli_query($conn, $sql);
+// Check for query errors and update $note if $result is false - crucial for "No results" message
+if ($result === false) {
+    // echo '<script> alert("Error in SQL query.");</script>'; // Optional: for debugging
+    $note = "Error retrieving data."; // Or a more generic "No results found."
+} elseif (mysqli_num_rows($result) == 0) {
+    // This part of $note assignment based on original logic where alerts were commented out.
+    // If specific branches set $note = "Data not found.", that will be used.
+    // Otherwise, the generic "No results found" will be used later.
+    if (empty($note)) { // Only set if not already set by a more specific error/condition
+      // $note = "Data not found."; // This could override specific $note values. Let's rely on the ternary operator later for default.
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -52,95 +56,23 @@ $result = mysqli_query($conn, $sql);
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../CSS/job_list.css">
+    <title>Job Listings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <title>Document</title>
-    <style>
-        #seardiv {
-            background-image: url(../../Image/Home/ctg2.jpg);
-            background-position: center;
-            background-size: cover;
-            background-repeat: none;
-
-            width: 90%;
-            height: 180px;
-            margin: 10px auto;
-            border-radius: 20px;
-            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
-
-        }
-
-        .searchbar2 {
-            margin-top: 30px;
-        }
-
-        #ctg_name {
-            color: white;
-            font-weight: 1500;
-            color: white;
-            font-size: 50px;
-            margin: 0;
-        }
-
-        #ctg_ds {
-            font-size: 30px;
-            font-style: italic;
-            color: white;
-            font-weight: 800;
-            margin: 10px 0 0 0;
-            /* margin-bottom: 0; */
-        }
-
-        #search_icon {
-            margin-left: -4px;
-        }
-
-        #idcheck {
-            margin-top: 0;
-            width: 100px;
-            -webkit-transition: width 0.4s ease-in-out;
-            transition: width 0.4s ease-in-out;
-        }
-
-        #idcheck:focus {
-            width: 150px;
-        }
-
-        #fsearch {
-            margin-top: 0;
-            width: 20%;
-            -webkit-transition: width 0.4s ease-in-out;
-            transition: width 0.4s ease-in-out;
-        }
-
-        #fsearch:focus {
-            width: 50%;
-        }
-    </style>
-
-
+    <!-- Removed old CSS link and inline styles -->
 </head>
 
-<body>
-    <!-- <header>
-        <link rel="stylesheet" href="../../CSS/header.css">
-        <div class="headerbar">
-            <h3>The #1 Site for Remote Jobs</h3>
-        </div>
-    </header> -->
-
-
-
+<body class="bg-light">
 
     <?php include_once("admin_navbar.php"); ?>
     <?php include_once("admin_ctg_bar.php"); ?>
 
-    <form action="admin_job_category.php" method="get">
-        <div class="searchbar" id="seardiv">
+    <div class="container mt-4">
+        <div class="p-5 rounded bg-dark text-white text-center mb-4" style="background-image: url('../../Image/Home/ctg2.jpg'); background-size: cover;">
             <?php
-            $ctg = $_GET['ctg'];
+            // Original $c1, $c2 logic from second code - UNCHANGED
+            // $ctg variable is already defined from $_GET["ctg"]
             if ($ctg == 'Graphics') {
                 $c1 = 'Graphics & Design';
                 $c2 = 'Designs to make you stand out';
@@ -168,108 +100,70 @@ $result = mysqli_query($conn, $sql);
             } else {
                 $c1 = 'New';
                 $c2 = 'New to make you stand out';
-            } ?>
-
-            <h1 id="ctg_name"><?php echo $c1; ?></h1>
-            <h3 id="ctg_ds"><?php echo $c2; ?></h3>
-
-            <input class="searchbar2" type="search" name="search" placeholder="<?php if (isset($_GET["search"])) {
-                                                                                    echo $_GET["search"];
-                                                                                } else {
-                                                                                    echo "Search";
-                                                                                } ?>">
-
-            <select class="searchbar2" name="filter" id="">
-                <option value="All Type">Job Type</option>
-                <option value="Full Time">Full Time</option>
-                <option value="Part Time">Part Time</option>
-            </select>
-            <button class="searchbar2" id="search_icon"><i class="fa fa-fw fa-search"></i></button>
-        </div>
-        <input type="hidden" name="ctg" value="<?php echo $ctg ?>">
-
-    </form>
-    <!-- <h3 id="phpmg">
-        <?php
-        // if (isset($_GET["filter"])) {
-        //     echo "Job Type: " . $_GET['filter'];
-        // }
-        ?>
-    </h3> -->
-
-    <div class="job_listings">
-        <div class="job_row">
-            <?php
-            if ($result && mysqli_num_rows($result) > 0) {
-                $newID = 1;
-                while ($row = mysqli_fetch_assoc($result)) {
-            ?>
-
-                    <div class="job">
-                        <h2>
-                            <?php echo $row["title"]; ?>
-                        </h2>
-                        <div class="job_details">
-                            <h4>Job Id:</h4>
-                            <p style="color: red; font-weight: 800;">
-                                <?php echo $row['jobId']; ?>
-                            </p>
-                            <h4>Job Type:</h4>
-                            <p>
-                                <?php echo $row['jobType']; ?>
-                            </p>
-                            <h4>Company:</h4>
-                            <p>
-                                <?php echo $row['company']; ?>
-                            </p>
-                            <h4>Location:</h4>
-                            <p>
-                                <?php echo $row['location']; ?>
-                            </p>
-                            <h4>Price:</h4>
-                            <p>$
-                                <?php echo $row['price']; ?> per monthly
-                            </p>
-                            <h4>Exit Day:</h4>
-                            <p><span style="color: rgba(255, 0, 0, 0.601);">
-                                    <?php echo $row['exitDay']; ?>
-                                </span></p>
-                        </div>
-                        <center>
-                            <form action="more_details.php" method="get">
-                                <button class="apply-btn" type="submit" name="apply">
-                                    <input type="hidden" name="jobId" value="<?php echo $row['jobId']; ?>">
-                                    More Details <i class="fas fa-info-circle"></i>
-                                </button>
-                            </form>
-                        </center>
-                    </div>
-
-                <?php
-                    $newID++;
-                }
-                ?>
-        </div>
-    </div>
-<?php
-            } else {
-                // echo '<script> alert("Data not found.");</script>';
-                $note = "Data not found.";
-?>
-
-    <div class="note" style="width:100%; text-align: center; ">
-        <h1 style="color: red">
-            <?php
-                echo $note;
-            ?>
-        </h1>
-    </div>
-
-
-
-<?php
             }
-?>
-</body>
+            ?>
+            <h1 class="display-4"><?php echo htmlspecialchars($c1); ?></h1>
+            <p class="lead fw-bold"><?php echo htmlspecialchars($c2); ?></p>
+        </div>
 
+        <form class="row g-2 mb-4" method="get" action="admin_job_category.php">
+            <div class="col-md-5">
+                <input type="search" name="search" value="<?= htmlspecialchars($search1) ?>" class="form-control" placeholder="Search">
+            </div>
+            <div class="col-md-3">
+                <select name="filter" class="form-select">
+                    <option value="All Type" <?= ($filter == "All Type" || $filter == "") ? 'selected' : '' ?>>All Type</option>
+                    <option value="Full Time" <?= $filter == "Full Time" ? 'selected' : '' ?>>Full Time</option>
+                    <option value="Part Time" <?= $filter == "Part Time" ? 'selected' : '' ?>>Part Time</option>
+                </select>
+            </div>
+            <input type="hidden" name="ctg" value="<?= htmlspecialchars($ctg) ?>">
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100"><i class="fa fa-search"></i> Search</button>
+            </div>
+        </form>
+
+        <?php if ($result && mysqli_num_rows($result) > 0) : ?>
+            <div class="row">
+                <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title"><?= htmlspecialchars($row["title"]); ?></h5>
+                                <!-- Job ID is not displayed in the card body to match the first code's visual style -->
+                                <p class="mb-1"><strong>Job Type:</strong> <?= htmlspecialchars($row['jobType']); ?></p>
+                                <p class="mb-1"><strong>Company:</strong> <?= htmlspecialchars($row['company']); ?></p>
+                                <p class="mb-1"><strong>Location:</strong> <?= htmlspecialchars($row['location']); ?></p>
+                                <p class="mb-1"><strong>Price:</strong> $<?= htmlspecialchars($row['price']); ?> per monthly</p>
+                                <p class="mb-1 text-danger"><strong>Exit Day:</strong> <?= htmlspecialchars($row['exitDay']); ?></p>
+                            </div>
+                            <div class="card-footer text-center bg-white">
+                                <!-- Form action and method from original second code -->
+                                <form action="more_details.php" method="get">
+                                    <input type="hidden" name="jobId" value="<?= htmlspecialchars($row['jobId']); ?>">
+                                    <!-- Button class and text from first code -->
+                                    <button class="btn btn-outline-primary btn-sm" type="submit" name="apply">
+                                        More Details <i class="fas fa-info-circle"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            </div>
+        <?php else : ?>
+            <div class="alert alert-danger text-center" role="alert">
+                <?php
+                // Display $note if it's set (e.g., by SQL error or specific logic), otherwise default message.
+                echo htmlspecialchars(!empty($note) ? $note : "No results found.");
+                ?>
+            </div>
+        <?php endif; ?>
+    </div>
+    <!-- Removed original .note div -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome JS kit from first code is not strictly necessary if CSS version covers icons -->
+    <!-- <script src="https://kit.fontawesome.com/a076d05399.js"></script> -->
+</body>
 </html>

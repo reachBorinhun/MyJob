@@ -16,7 +16,8 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         position: sticky;
         top: 0;
-        z-index: 1000;
+        background-color: white;
+        z-index: 50000000;
     }
 
     .navbar-logo img {
@@ -53,6 +54,7 @@
     @media screen and (max-width: 768px) {
         .navbar {
             flex-wrap: wrap;
+               background-color: white;
         }
 
         .navbar-links {
@@ -81,7 +83,7 @@
 <div class="navbar" id="navbarid">
     <div class="navbar-logo">
         <a href="index.php">
-            <img src="../Image/logo/ITJobs.png" alt="ITJobs Logo">
+            <img src="../Image/logo/Jobio_1.png" alt="ITJobs Logo">
         </a>
     </div>
 

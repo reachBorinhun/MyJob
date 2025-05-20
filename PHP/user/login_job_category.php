@@ -36,7 +36,6 @@ $result = mysqli_query($conn, $sql);
 </head>
 <body class="bg-light">
 
-<?php include_once("login_header.php"); ?>
 <?php include_once("login_navbar.php"); ?>
 <?php include_once("login_ctg_bar.php"); ?>
 
@@ -108,7 +107,7 @@ $result = mysqli_query($conn, $sql);
         </div>
     <?php endif; ?>
 </div>
-
+<?php if (($note ?? '') != "Data not found.") include_once("login_footer.php"); ?>
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

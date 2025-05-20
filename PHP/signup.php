@@ -58,7 +58,7 @@ if (isset($_POST["submit"])) {
 
     <form action="signup.php" method="post">
         <div class="form">
-            <a href="index.php"> <img src="../Image/logo/ITJobs-remove.png" alt="logo" class="logo"></a>
+            <a href="index.php"> <img src="../Image/logo/Jobio_1-remove.png" alt="logo" class="logo"></a>
             <a href="index.php"><img src="../Image/logo/X.png" alt="x"
                     style="float: inline-end; width: 20px; height: 20px;"></a>
 

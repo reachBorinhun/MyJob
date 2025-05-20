@@ -1,105 +1,226 @@
-#logo {
-    height: 25px;
-    width: auto;
-}
-
-.navbar {
+/* Basic Reset & Body Style (Optional, but good practice) */
+body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    overflow: hidden;
-    background-color: #ffffff;
-    border-style: solid;
-    border-top-style: none;
-    border-left-style: none;
-    border-right-style: none;
+    font-family: Arial, Helvetica, sans-serif; /* Your preferred font */
+    background-color: #f4f7f6; /* A light page background to contrast the white navbar */
+}
+
+/* Navbar Container */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff; /* Your background color */
+    padding: 10px 20px; /* Balanced padding */
+    color: black; /* Your text color */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle bottom shadow instead of border */
     position: sticky;
-
+    top: 0; /* Required for sticky to work */
+    z-index: 1000;
+    width: 100%;
+    box-sizing: border-box; /* Ensures padding doesn't add to width */
 }
 
-.navbar a {
-    float: left;
-    display: block;
-    color: black;
-    text-align: center;
-    padding: 14px 16px;
+/* Logo */
+.navbar .logo-link {
+    display: inline-flex; /* Use flex to align image if text were next to it */
+    align-items: center;
+    padding: 0; /* Remove padding if it's just an image */
+}
+.navbar .logo-link:hover { /* Remove hover effects from logo link */
+    background-color: transparent;
     text-decoration: none;
-    font-size: 17px;
-
+}
+#logo {
+    height: 30px; /* Slightly larger than your 25px for better visibility */
+    width: auto;
+    vertical-align: middle; /* Good practice for images */
 }
 
-.navbar a:hover {
-    color: #04AA6D;
-    text-decoration: underline;
-    text-underline-offset: 10px;
+/* Navigation Links & User Actions Containers */
+.nav-links,
+.user-actions {
+    display: flex;
+    align-items: center;
+}
+.user-actions {
+    margin-left: auto; /* Pushes user actions to the right if nav-links are present and take up space */
+}
+/* If nav-links is empty, .user-actions will be next to logo. If you want user-actions always far right:
+.navbar .nav-links { margin-right: auto; }
+.navbar .user-actions { /* no margin-left: auto needed then */ } */
 
+
+/* General Link Styling within Navbar */
+.navbar a {
+    color: black; /* Your text color */
+    text-decoration: none;
+    padding: 10px 12px; /* Consistent padding */
+    margin: 0 3px; /* Small margin between links */
+    border-radius: 4px; /* Subtle rounding */
+    transition: color 0.2s ease, background-color 0.2s ease, text-decoration-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    font-size: 16px; /* Slightly smaller for a cleaner look, adjust if needed */
+    text-underline-offset: 5px; /* Reduced offset for underline */
+}
+
+.navbar a i.fa {
+    margin-right: 6px;
+    font-size: 1.1em;
+    color: #555; /* Slightly muted icon color, can be 'inherit' */
+    transition: color 0.2s ease;
+}
+
+/* Hover and Active States */
+.navbar a:hover:not(.logo-link),
+.navbar a:focus:not(.logo-link) { /* Added focus for accessibility */
+    color: #04AA6D; /* Your accent color */
+    background-color: #f0f0f0; /* Subtle background on hover */
+    text-decoration: underline;
+    text-decoration-color: #04AA6D;
+}
+.navbar a:hover i.fa {
+    color: #04AA6D; /* Icon color change on hover */
 }
 
 .navbar a.active {
-    color: #04AA6D;
-    text-underline-offset: 10px;
+    color: #04AA6D; /* Your accent color */
+    font-weight: bold;
     text-decoration: underline;
+    text-decoration-color: #04AA6D;
+    /* background-color: #e6f7f1; /* Optional: very light green background for active */
+}
+.navbar a.active i.fa {
+    color: #04AA6D;
 }
 
 
+/* Profile Link Specifics */
+#profile-link {
+    padding: 4px 8px; /* Less vertical padding for profile if image is larger */
+}
+.profile-image-container {
+    margin-right: 8px; /* Space between image and "Profile" text */
+}
+.pimge {
+    width: 32px; /* Adjusted from your 40px to fit better with 30px logo */
+    height: 32px;
+    border-radius: 50%; /* Circular */
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #ddd; /* Neutral border */
+    transition: border-color 0.2s ease;
+}
+#profile-link:hover .pimge,
+#profile-link.active .pimge {
+    border-color: #04AA6D; /* Your accent color for border on hover/active */
+}
+.profile-text {
+    font-size: 0.95em;
+}
+
+/* Logout Link Specifics (if any) */
+#logout-link i.fa {
+    /* color: #c0392b; /* Optional: different color for logout icon */
+}
+#logout-link:hover i.fa {
+    /* color: #e74c3c; */
+}
+
+
+/* Hamburger Icon */
 .navbar .icon {
     display: none;
+    font-size: 22px; /* Adjust size as needed */
+    padding: 8px 10px;
+    color: black;
+    cursor: pointer;
+}
+.navbar .icon i.fa {
+    margin-right: 0;
+}
+.navbar .icon:hover {
+    color: #04AA6D;
+    background-color: #f0f0f0;
+    border-radius: 4px;
 }
 
-#login,
-#profile {
-    float: inline-end;
-}
+
+/* --- Responsive Design --- */
+@media screen and (max-width: 900px) { /* Your breakpoint */
+    .navbar .nav-links,
+    .navbar .user-actions .profile-text, /* Optionally hide profile text to save space */
+    .navbar .user-actions a:not(#profile-link) { /* Hide logout text, keep icon if desired. This hides full link */
+        /* display: none; /* Simpler: just hide them */
+    }
+    /* More nuanced approach: hide specific elements or change how they display */
+    .navbar .nav-links { display: none; }
+    .navbar .user-actions { margin-left: auto; /* ensure it stays to the right of logo */ }
+    .navbar #logout-link span { display: none; } /* If logout text is in a span */
+    .navbar #logout-link i.fa { margin-right: 0; } /* If only icon shown */
 
 
-@media screen and (max-width: 900px) {
-    .navbar a:not(:first-child) {
-        display: none;
+    .navbar .icon {
+        display: block; /* Show hamburger icon */
+        order: 3; /* If using flex order for logo, links, icon */
     }
 
-    .navbar a.icon {
-        float: right;
-        display: block;
-    }
-
-    #login,
-    #profile {
-        float: left;
-    }
-}
-
-@media screen and (max-width: 900px) {
+    /* When responsive class is added by JS */
     .navbar.responsive {
-        position: relative;
+        flex-direction: column;
+        align-items: flex-start; /* Align items to the start when stacked */
+        padding-bottom: 10px; /* Add some padding at the bottom */
+    }
+    
+    .navbar.responsive .logo-link {
+        margin-bottom: 10px; /* Space below logo when stacked */
+    }
+
+    .navbar.responsive .nav-links,
+    .navbar.responsive .user-actions {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .navbar.responsive .user-actions {
+        margin-left: 0; /* Reset margin for stacked layout */
+    }
+
+    .navbar.responsive a:not(.logo-link) {
+        width: 100%; /* Full width for tappable area */
+        padding: 12px 15px; /* Larger padding for touch */
+        margin: 4px 0; /* Vertical margin for stacked links */
+        box-sizing: border-box;
+        justify-content: flex-start; /* Align icon and text to the left */
+    }
+    .navbar.responsive .profile-text {
+        display: inline-block; /* Ensure profile text is visible in responsive */
+    }
+    .navbar.responsive #profile-link .profile-image-container {
+       margin-right: 8px;
     }
 
     .navbar.responsive .icon {
         position: absolute;
-        right: 0;
-        top: 0;
-    }
-
-    .navbar.responsive a {
-        float: none;
-        display: block;
-        text-align: left;
-
-    }
-
-    #login,
-    #profile {
-        float: left;
+        right: 20px;
+        top: 10px; /* Align with navbar's top padding */
     }
 }
 
-.pimge {
-    width: 40px;
-    height: 40px;
-    border-style: 2px solid ;
-    border-color: #04AA6D;
-    border-radius: 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    margin-top: -10px;
-
+/* Further refinement for very small screens if needed */
+@media screen and (max-width: 480px) {
+    #logo {
+        height: 28px; /* Even smaller logo */
+    }
+    .navbar a {
+        font-size: 15px;
+    }
+    .navbar.responsive .profile-text {
+        /* display: none; /* Example: hide profile text */
+    }
+    .navbar.responsive #profile-link .profile-image-container {
+        /* margin-right: 0; */
+    }
 }

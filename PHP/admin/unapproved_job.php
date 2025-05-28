@@ -78,21 +78,29 @@ if (isset($_GET['remove']) || isset($_GET['add'])) {
 <?php
 $note = "";
 $base_sql = "SELECT * FROM unapproved_job"; 
-$current_search_term = isset($_GET["search"]) ? htmlspecialchars($_GET["search"]) : "";
+$current_search_term = isset($_GET["search"]) ? htmlspecialchars($_GET["search"]) : ""; // htmlspecialchars for display
 $current_filter = isset($_GET["filter"]) ? $_GET["filter"] : "All Type";
 
-if (!empty($current_search_term) || $current_filter !== "All Type") {
-    $search = mysqli_real_escape_string($conn, $current_search_term);
+// Use mysqli_real_escape_string for values going into SQL
+$search_sql_safe = isset($_GET["search"]) ? mysqli_real_escape_string($conn, $_GET["search"]) : "";
+$filter_sql_safe = mysqli_real_escape_string($conn, $current_filter);
+
+
+if (!empty($search_sql_safe) || $current_filter !== "All Type") {
     $conditions = [];
-    if (!empty($search)) {
-        $conditions[] = "(title LIKE '%$search%' OR company LIKE '%$search%' OR location LIKE '%$search%' OR price LIKE '%$search%' OR exitDay LIKE '%$search%')";
+    if (!empty($search_sql_safe)) {
+        $conditions[] = "(title LIKE '%$search_sql_safe%' OR company LIKE '%$search_sql_safe%' OR location LIKE '%$search_sql_safe%' OR price LIKE '%$search_sql_safe%' OR exitDay LIKE '%$search_sql_safe%')";
     }
     if ($current_filter === "Full Time" || $current_filter === "Part Time") {
-        $conditions[] = "job_type = '" . mysqli_real_escape_string($conn, $current_filter) . "'";
+        // $filter_sql_safe is already escaped if needed, but we know the specific values here.
+        $conditions[] = "job_type = '" . $filter_sql_safe . "'";
     }
     if (!empty($conditions)) {
         $sql = $base_sql . " WHERE " . implode(" AND ", $conditions);
     } else {
+        // This case might not be reached if the outer if condition implies at least one filter is active.
+        // However, for completeness, if $current_filter was something other than "All Type", "Full Time", or "Part Time"
+        // and $search_sql_safe was empty, $conditions would be empty.
         $sql = $base_sql; 
     }
 } else {
@@ -214,12 +222,14 @@ if (!$result_jobs) {
     <?php include_once("admin_navbar.php"); ?>
 
     <div class="container mt-4">
-        <!-- <form action="unapproved_job.php" method="get" class="mb-4 search-filter-form">
+        <!-- Search form (commented out as in original) -->
+        <!-- 
+        <form action="unapproved_job.php" method="get" class="mb-4 search-filter-form">
             <div class="row justify-content-center g-3">
                 <div class="col-md-5 col-lg-4">
                     <input class="form-control" type="search" name="search" 
                            placeholder="Search title, company..." 
-                           value="<?php echo $current_search_term; ?>">
+                           value="<?php echo $current_search_term; // This is htmlspecialchars'd version ?>">
                 </div>
                 <div class="col-md-3 col-lg-3">
                     <select name="filter" class="form-select">
@@ -232,14 +242,15 @@ if (!$result_jobs) {
                     <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search me-1"></i>Search</button>
                 </div>
             </div>
-        </form> -->
+        </form> 
+        -->
 
         <h3 id="phpmg">
             <?php 
             if ($current_filter !== 'All Type' && !empty($current_search_term)) {
-                echo "Results for \"" . htmlspecialchars($current_search_term) . "\" (Type: " . htmlspecialchars($current_filter) . ")";
+                echo "Results for \"" . $current_search_term . "\" (Type: " . htmlspecialchars($current_filter) . ")";
             } else if (!empty($current_search_term)) {
-                echo "Search Results for \"" . htmlspecialchars($current_search_term) . "\"";
+                echo "Search Results for \"" . $current_search_term . "\"";
             } else if ($current_filter !== 'All Type') {
                 echo "Filtered by: " . htmlspecialchars($current_filter);
             } else {

@@ -72,7 +72,7 @@
 
     <div class="disc">
         <h2>Why Choose ITJob?</h2>
-        <img src="../Image/logo/ITJobs.png" alt="ITJob Logo" class="logo">
+        <img src="../Image/logo/Jobio_1-remove.png" alt="ITJob Logo" class="logo">
 
         <ul>
             <li><strong>Diverse Job Listings:</strong> Explore a wide variety of opportunities in tech and beyond.</li>

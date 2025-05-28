@@ -9,7 +9,6 @@ if (!isset($_SESSION['id'])) {
 include("../conn.php"); // Ensure $conn is established here
 $active4 = "active"; // For your navbar
 $userid = $_SESSION['id'];
-$note = ""; // For general messages
 $success_message = "";
 $error_message = "";
 
@@ -23,12 +22,16 @@ if (isset($_SESSION['error_message'])) {
     unset($_SESSION['error_message']);
 }
 
+// --- Configuration for Images (copied from first code, VERIFY PATHS) ---
+$project_url_path = '/WorkWise'; // <<< --- CRITICAL: VERIFY AND CHANGE THIS IF NEEDED for your project---
+$default_placeholder_image_path_in_project = 'image/uploads/placeholder.png';
+// --- End Image Configuration ---
+
 // --- HANDLE REMOVE ACTION (POST request) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_bookmark_id'])) {
     $bookmark_id_to_remove = filter_input(INPUT_POST, 'remove_bookmark_id', FILTER_VALIDATE_INT);
 
     if ($bookmark_id_to_remove) {
-        // Ensure the bookmark belongs to the current user before deleting
         $sql_delete = "DELETE FROM bmjob WHERE id = ? AND userId = ?";
         $stmt_delete = mysqli_prepare($conn, $sql_delete);
         if ($stmt_delete) {
@@ -57,14 +60,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_bookmark_id'])
 $search_term = isset($_GET['search']) ? trim($_GET['search']) : '';
 $job_type_filter = isset($_GET['filter']) ? $_GET['filter'] : 'All Type';
 
+// For display in heading and form
+$current_search_term_display = htmlspecialchars($search_term);
+$current_filter_display = htmlspecialchars($job_type_filter);
+
+
 $sql_base = "SELECT bm.id as bookmark_id, job.*
              FROM bmjob bm
              JOIN jobtable job ON bm.jobId = job.jobId
-             WHERE bm.userId = ?"; // User specific
+             WHERE bm.userId = ?";
 
 $conditions = [];
-$params = [$userid]; // Start with userid for the base condition
-$param_types = "i"; // Type for userid
+$params = [$userid];
+$param_types = "i";
 
 if (!empty($search_term)) {
     $conditions[] = "(job.title LIKE ? OR job.company LIKE ? OR job.location LIKE ?)";
@@ -84,25 +92,30 @@ if ($job_type_filter !== 'All Type' && ($job_type_filter === 'Full Time' || $job
 if (!empty($conditions)) {
     $sql_base .= " AND " . implode(" AND ", $conditions);
 }
-$sql_base .= " ORDER BY bm.id DESC"; // Or job.title, etc.
+$sql_base .= " ORDER BY bm.id DESC";
 
 $stmt_select = mysqli_prepare($conn, $sql_base);
 if ($stmt_select) {
-    if (!empty($params) && !empty($param_types)) {
-        // mysqli_stmt_bind_param needs references, so we create them
-        $bind_names[] = $param_types;
+    if (count($params) > 0 && !empty($param_types)) {
+        $bind_names = [$param_types];
         for ($i = 0; $i < count($params); $i++) {
             $bind_name = 'bind' . $i;
             $$bind_name = $params[$i];
             $bind_names[] = &$$bind_name;
         }
-        call_user_func_array('mysqli_stmt_bind_param', array_merge([$stmt_select], $bind_names));
+        $stmt_ref = $stmt_select; 
+        array_unshift($bind_names, $stmt_ref); 
+        call_user_func_array('mysqli_stmt_bind_param', $bind_names);
+        array_shift($bind_names); 
     }
     mysqli_stmt_execute($stmt_select);
     $result = mysqli_stmt_get_result($stmt_select);
+    if (!$result && empty($error_message)) { 
+        $error_message = "Error fetching saved jobs: " . htmlspecialchars(mysqli_stmt_error($stmt_select));
+    }
 } else {
     $error_message = "Error preparing search statement: " . htmlspecialchars(mysqli_error($conn));
-    $result = false; // Ensure result is false on error
+    $result = false;
 }
 
 ?>
@@ -113,56 +126,75 @@ if ($stmt_select) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saved Jobs - WorkWise</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS (from first code) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Your Custom CSS (can override Bootstrap or add new styles) -->
-    <link rel="stylesheet" href="../../CSS/job_list_bootstrap.css"> <!-- Create this file for custom styles -->
     <style>
-        body {
-            background-color: #f8f9fa; /* Light gray background */
+        body { background-color: #f8f9fa; }
+        .job-card-wrapper { margin-bottom: 2rem; }
+        .job-card {
+            position: relative; /* For absolute positioning of elements like remove button */
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden; 
+            background-color: #fff;
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
         }
-        .main-color-bg {
-            background-color: rgb(55, 90, 196) !important;
-            border-color: rgb(55, 90, 196) !important;
+        .job-card .card-img-top-container { 
+            position: relative; 
+            padding: 1.25rem; 
+            background-color: #f8f9fa; 
+            height: 200px; 
         }
-        .main-color-text {
-            color: rgb(55, 90, 196) !important;
+        .job-card .card-img-top {
+            width: 100%;
+            height: 100%; 
+            object-fit: cover;
+            border-radius: 8px; 
         }
-        .btn-main-color {
-            background-color: rgb(55, 90, 196);
-            color: white;
-            border-color: rgb(45, 80, 186); /* Slightly darker for border */
+        .job-card .job-title-overlay {
+            position: absolute;
+            bottom: 1.25rem; 
+            left: 1.25rem;   
+            background-color: rgba(255, 255, 255, 0.92); color: #0d6efd;
+            padding: 0.5rem 1rem; border-radius: 8px; font-weight: bold;
+            font-size: 1.1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            max-width: calc(100% - (2 * 1.25rem)); 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .btn-main-color:hover {
-            background-color: rgb(45, 80, 186);
-            color: white;
-            border-color: rgb(35, 70, 176);
+        .job-card .card-body {
+            padding: 1.25rem; flex-grow: 1; display: flex; flex-direction: column;
         }
-        .card {
-            margin-bottom: 20px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .job-card .placeholder-text p {
+            font-size: 0.8em; color: #c0392b; padding: 8px; text-align: center;
+            background-color: #fdedec; border: 1px solid #fadbd8;
+            border-radius: .25rem; margin-bottom: 0.75rem; margin-top:0;
         }
-        .card-header.main-color-bg {
-            color: white;
+        .job-card .detail-item {
+            display: flex; align-items: center; margin-bottom: 0.8rem; font-size: 0.9rem;
         }
-        .job-detail-label {
-            font-weight: bold;
-            color: #555;
+        .job-card .detail-item i.fa-fw {
+            color: #6c757d; margin-right: 10px; width: 1.28571429em; text-align: center;
         }
-        .search-filter-section {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        .job-card .detail-item .detail-label { color: #6c757d; margin-right: 5px; }
+        .job-card .detail-item .detail-value { color: #212529; font-weight: 500; }
+        .job-card .salary-badge {
+            background-color: #e9ecef; padding: 5px 10px; border-radius: 6px;
+            font-weight: bold; color: #212529; font-size: 0.9em;
         }
+        #phpmg { text-align: center; margin-bottom: 1.5rem; font-size: 1.5rem; color: #333; }
+        
         .remove-btn-container {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px; 
+            right: 15px; 
+            z-index: 10; 
+        }
+        .remove-btn-container .btn-remove-bookmark {
+             /* Custom styling for remove button if default Bootstrap is not enough */
         }
     </style>
 </head>
@@ -172,121 +204,199 @@ if ($stmt_select) {
     <?php include_once("login_navbar.php"); ?>
 
     <div class="container mt-4">
-        <h2 class="mb-4 main-color-text">My Saved Jobs</h2>
 
         <?php if ($success_message): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <?php echo htmlspecialchars($success_message); ?>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
-        <?php if ($error_message): ?>
+        <?php if ($error_message && !$result): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <?php echo htmlspecialchars($error_message); ?>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
-
-        <!-- Search and Filter Form -->
-        <div class="search-filter-section">
-            <form action="save_job.php" method="get" class="form-row align-items-end">
-                <div class="col-md-5 mb-2 mb-md-0">
-                    <label for="search" class="sr-only">Search</label>
-                    <input type="search" name="search" id="search" class="form-control"
-                           placeholder="Search by title, company, location..."
-                           value="<?php echo htmlspecialchars($search_term); ?>">
+        
+        <form action="save_job.php" method="get" class="mb-4 search-filter-form">
+            <div class="row justify-content-center g-3">
+                <div class="col-md-5 col-lg-4">
+                    <input class="form-control" type="search" name="search" 
+                           placeholder="Search title, company..." 
+                           value="<?php echo htmlspecialchars($search_term); ?>"
+                           id="search"> 
                 </div>
-                <div class="col-md-4 mb-2 mb-md-0">
-                    <label for="filter" class="sr-only">Job Type</label>
-                    <select name="filter" id="filter" class="form-control">
-                        <option value="All Type" <?php if ($job_type_filter == 'All Type') echo 'selected'; ?>>All Job Types</option>
-                        <option value="Full Time" <?php if ($job_type_filter == 'Full Time') echo 'selected'; ?>>Full Time</option>
-                        <option value="Part Time" <?php if ($job_type_filter == 'Part Time') echo 'selected'; ?>>Part Time</option>
+                <div class="col-md-3 col-lg-3">
+                    <select name="filter" class="form-select" id="filter"> 
+                        <option value="All Type" <?php echo ($job_type_filter == 'All Type') ? 'selected' : ''; ?>>All Job Types</option>
+                        <option value="Full Time" <?php echo ($job_type_filter == 'Full Time') ? 'selected' : ''; ?>>Full Time</option>
+                        <option value="Part Time" <?php echo ($job_type_filter == 'Part Time') ? 'selected' : ''; ?>>Part Time</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-main-color btn-block"><i class="fa fa-fw fa-search"></i> Filter / Search</button>
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search me-1"></i>Search</button>
                 </div>
-            </form>
-            <?php if (!empty($search_term) || $job_type_filter !== 'All Type'): ?>
-                <div class="mt-2">
+            </div>
+             <?php if (!empty($search_term) || $job_type_filter !== 'All Type'): ?>
+                <div class="text-center mt-3"> 
                     <small>
-                        Showing results for:
+                        Currently showing results for:
                         <?php if (!empty($search_term)) echo "<em>'" . htmlspecialchars($search_term) . "'</em> "; ?>
                         <?php if ($job_type_filter !== 'All Type') echo "Job Type: <em>" . htmlspecialchars($job_type_filter) . "</em>"; ?>
-                        <a href="save_job.php" class="ml-2">Clear Filters</a>
+                        <a href="save_job.php" class="ms-2">Clear Filters</a>
                     </small>
                 </div>
             <?php endif; ?>
-        </div>
+        </form>
 
+        <h3 id="phpmg" class="mb-4">
+            <?php
+            if ($current_filter_display !== 'All Type' && !empty($current_search_term_display)) {
+                echo "Saved Jobs: Results for \"" . $current_search_term_display . "\" (Type: " . $current_filter_display . ")";
+            } else if (!empty($current_search_term_display)) {
+                echo "Saved Jobs: Search Results for \"" . $current_search_term_display . "\"";
+            } else if ($current_filter_display !== 'All Type') {
+                echo "Saved Jobs: Filtered by Type " . $current_filter_display;
+            } else {
+                echo "All My Saved Jobs";
+            }
+            ?>
+        </h3>
 
-        <!-- Job Listings -->
         <div class="row">
             <?php
             if ($result && mysqli_num_rows($result) > 0) {
                 while ($row = mysqli_fetch_assoc($result)) {
+                    $job_image_db_value = isset($row['job_image']) ? trim($row['job_image']) : '';
+                    $placeholder_src_url = rtrim($project_url_path, '/') . '/' . ltrim($default_placeholder_image_path_in_project, '/');
+                    $current_image_src_to_display = $placeholder_src_url; 
+                    $display_actual_image = false;
+                    $image_not_found_message_for_card = ""; 
+
+                    if (!empty($job_image_db_value)) {
+                        $actual_image_src_url = rtrim($project_url_path, '/') . '/' . ltrim(htmlspecialchars($job_image_db_value), '/');
+                        $filesystem_path_to_check = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . rtrim($project_url_path, '/') . '/' . ltrim($job_image_db_value, '/');
+                        
+                        if (file_exists($filesystem_path_to_check)) {
+                            $current_image_src_to_display = $actual_image_src_url;
+                            $display_actual_image = true;
+                        } else {
+                            $image_not_found_message_for_card = "Image not found on server. Path: " . htmlspecialchars($job_image_db_value);
+                        }
+                    } else {
+                         $image_not_found_message_for_card = "No image path specified for this job.";
+                    }
                     ?>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card position-relative">
-                            <div class="card-header main-color-bg text-white">
-                                <h5 class="card-title mb-0" style="font-size: 1.1rem;"><?php echo htmlspecialchars($row["title"]); ?></h5>
+                    <div class="col-lg-4 col-md-6 job-card-wrapper">
+                        <div class="card job-card h-100 shadow-sm">
+                            
+                            <div class="remove-btn-container"> 
+                                <form action="save_job.php" method="post" onsubmit="return confirm('Are you sure you want to remove this saved job?');">
+                                    <input type="hidden" name="remove_bookmark_id" value="<?php echo htmlspecialchars($row['bookmark_id']); ?>">
+                                    <button type="submit" class="btn btn-danger btn-sm btn-remove-bookmark" title="Remove Bookmark">
+                                        <i class="fa fa-trash"></i> 
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="card-img-top-container">
+                                <img src="<?php echo $current_image_src_to_display; ?>" class="card-img-top" alt="<?php echo htmlspecialchars($row['title']); ?> image">
+                                <div class="job-title-overlay">
+                                    <?php echo htmlspecialchars($row["title"]); ?>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <div class="remove-btn-container">
-                                     <form action="save_job.php" method="post" onsubmit="return confirm('Are you sure you want to remove this saved job?');">
-                                        <input type="hidden" name="remove_bookmark_id" value="<?php echo htmlspecialchars($row['bookmark_id']); ?>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Remove Bookmark">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                    </form>
-                                </div>
-
-                                <p class="card-text mb-1"><span class="job-detail-label">Company:</span> <?php echo htmlspecialchars($row['company']); ?></p>
-                                <p class="card-text mb-1"><span class="job-detail-label">Location:</span> <?php echo htmlspecialchars($row['location']); ?></p>
-                                <p class="card-text mb-1"><span class="job-detail-label">Type:</span> <?php echo htmlspecialchars($row['jobType']); ?></p>
-                                <?php if (!empty($row['category'])): ?>
-                                    <p class="card-text mb-1"><span class="job-detail-label">Category:</span> <?php echo htmlspecialchars($row['category']); ?></p>
+                                <?php if (!$display_actual_image && !empty($image_not_found_message_for_card)): ?>
+                                    <div class="placeholder-text">
+                                        <p><small><?php echo htmlspecialchars($image_not_found_message_for_card); ?></small></p>
+                                    </div>
                                 <?php endif; ?>
-                                <p class="card-text mb-3"><span class="job-detail-label">Salary:</span> $<?php echo htmlspecialchars($row['price']); ?> per monthly</p>
 
-                                <a href="more_details.php?jobId=<?php echo htmlspecialchars($row['jobId']); ?>"
-                                   class="btn btn-outline-secondary btn-sm">
-                                    More Details <i class="fas fa-info-circle"></i>
+                                <div class="detail-item">
+                                    <i class="fas fa-briefcase fa-fw"></i>
+                                    <span class="detail-label">Type:</span>
+                                    <span class="detail-value"><?php echo htmlspecialchars($row['jobType']); ?></span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-building fa-fw"></i>
+                                    <span class="detail-label">Company:</span>
+                                    <span class="detail-value"><?php echo htmlspecialchars($row['company']); ?></span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-map-marker-alt fa-fw"></i>
+                                    <span class="detail-label">Location:</span>
+                                    <span class="detail-value"><?php echo htmlspecialchars($row['location']); ?></span>
+                                </div>
+                                <?php if (!empty($row['category'])): ?>
+                                <div class="detail-item">
+                                    <i class="fas fa-tags fa-fw"></i>
+                                    <span class="detail-label">Category:</span>
+                                    <span class="detail-value"><?php echo htmlspecialchars($row['category']); ?></span>
+                                </div>
+                                <?php endif; ?>
+                                <div class="detail-item">
+                                    <i class="fas fa-dollar-sign fa-fw"></i>
+                                    <span class="detail-label">Salary:</span>
+                                    <span class="salary-badge ms-1">$<?php echo htmlspecialchars($row['price']); ?> / month</span>
+                                </div>
+                                
+                                <a href="more_details.php?jobId=<?php echo htmlspecialchars($row['jobId']); ?>" class="btn btn-primary mt-auto w-100">
+                                    More Details <i class="fas fa-info-circle ms-1"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
                     <?php
                 }
-            } else {
+            } else if ($result) { 
+                 $alert_message = "";
+                 if (!empty($search_term) || $job_type_filter !== 'All Type') {
+                    $alert_message = "No saved jobs match your current filter/search criteria.";
+                } else {
+                    $alert_message = "You haven't saved any jobs yet. Browse jobs and save your favorites!";
+                }
                 ?>
                 <div class="col-12">
-                    <div class="alert alert-info text-center" role="alert">
-                        <?php
-                        if (!empty($search_term) || $job_type_filter !== 'All Type') {
-                            echo "No saved jobs match your current filter/search criteria.";
-                        } else {
-                            echo "You haven't saved any jobs yet.";
-                        }
-                        ?>
+                    <div class="alert alert-warning text-center" role="alert"> 
+                        <h2 class="alert-heading">No Saved Jobs Found</h2>
+                        <p><?php echo $alert_message; ?></p>
+                         <?php if (empty($search_term) && $job_type_filter === 'All Type'): ?>
+                            <a href="user.php" class="btn btn-primary mt-2">Find Jobs</a>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <?php
             }
+            
             if ($stmt_select) mysqli_stmt_close($stmt_select);
-            // mysqli_close($conn); // Optional: close connection if appropriate
             ?>
-        </div> <!-- /.row -->
-    </div> <!-- /.container -->
+        </div> 
+    </div> 
 
-    <!-- Bootstrap JS and dependencies (jQuery, Popper.js) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <?php
+    $should_show_footer = false;
+    if ($result) { 
+        if (mysqli_num_rows($result) > 0) {
+            $should_show_footer = true; 
+        } else {
+            if (!empty($search_term) || $job_type_filter !== 'All Type') {
+                $should_show_footer = true; 
+            } else {
+                $should_show_footer = false;
+            }
+        }
+    } else {
+        if (!empty($error_message)) {
+             $should_show_footer = true;
+        }
+    }
+    
+    if ($should_show_footer) {
+         include_once('login_footer.php'); 
+    }
+    ?>
+
+    <?php if ($conn) { mysqli_close($conn); } ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
